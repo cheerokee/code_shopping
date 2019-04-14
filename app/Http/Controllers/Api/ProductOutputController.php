@@ -3,6 +3,7 @@
 namespace CodeShopping\Http\Controllers\Api;
 
 use CodeShopping\Http\Controllers\Controller;
+use CodeShopping\Http\Filters\ProductOutputFilter;
 use CodeShopping\Http\Requests\ProductOutputRequest;
 use CodeShopping\Http\Resources\ProductOutputResource;
 use CodeShopping\Models\ProductOutput;
@@ -14,8 +15,10 @@ class ProductOutputController extends Controller
     {
         //with = Carregamento prematuro, para não haver muita consulta no banco
         //Carregamento retardado, somente na hora que acessa a variavel é que a classe relacionada é carregada
-        $outputs = ProductOutput::with('product')->paginate(); //eager loadind | lady loading
-        return ProductOutputResource::collection($outputs);
+        $filter = app(ProductOutputFilter::class);
+        $filterQuery = ProductOutput::with('product')->filtered($filter);
+        $inputs = $filterQuery->paginate(); //eager loadind | lady loading
+        return ProductOutputResource::collection($inputs);
     }
 
     public function store(ProductOutputRequest $request)

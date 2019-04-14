@@ -3,6 +3,7 @@
 namespace CodeShopping\Http\Controllers\Api;
 
 use CodeShopping\Http\Controllers\Controller;
+use CodeShopping\Http\Filters\ProductInputFilter;
 use CodeShopping\Http\Requests\ProductInputRequest;
 use CodeShopping\Http\Resources\ProductInputResource;
 use CodeShopping\Models\ProductInput;
@@ -14,7 +15,9 @@ class ProductInputController extends Controller
     {
         //with = Carregamento prematuro, para não haver muita consulta no banco
         //Carregamento retardado, somente na hora que acessa a variavel é que a classe relacionada é carregada
-        $inputs = ProductInput::with('product')->paginate(); //eager loadind | lady loading
+        $filter = app(ProductInputFilter::class);
+        $filterQuery = ProductInput::with('product')->filtered($filter);
+        $inputs = $filterQuery->paginate(); //eager loadind | lady loading
         return ProductInputResource::collection($inputs);
     }
 
