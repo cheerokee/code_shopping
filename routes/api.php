@@ -24,12 +24,17 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function (){
     Route::name('forgot')->post('forgot', 'AuthController@forgot');
     Route::name('refresh')->post('refresh','AuthController@refresh');
 
+    Route::post('customers/phone_numbers', 'CustomerController@requestPhoneNumberUpdate');
+    Route::patch('customers/phone_numbers/{token}', 'CustomerController@updatePhoneNumber');
+
     Route::resource('customers','CustomerController',['only' => ['store']]);
 
     //Especificando o guardião api
     Route::group(['middleware' => ['auth:api','jwt.refresh']], function (){
 
         Route::patch('profile', 'UserProfileController@update');
+
+        Route::resource('chat_groups.messages', 'ChatMessageFbController',['only' => ['store']]);
 
         Route::group(['middleware' => ['can:is_seller']], function (){
             Route::name('logout')->post('logout','AuthController@logout');
@@ -50,6 +55,10 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function (){
             Route::resource('outputs','ProductOutputController',['only' => ['index','store','show']]);
             Route::patch('users/{user}/restore','UserController@restore');
             Route::resource('users','UserController',['except' => ['create','edit']]);
+            Route::resource('chat_groups','ChatGroupController');
+            Route::resource('chat_groups.users', 'ChatGroupUserController', [
+                'only' => ['index', 'store', 'destroy']
+            ]);
         });
 
 

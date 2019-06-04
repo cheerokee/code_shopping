@@ -14,7 +14,29 @@ import { ResetPhoneNumberPage } from "../pages/reset-phone-number/reset-phone-nu
 import { FirebaseAuthProvider } from "../providers/auth/firebase-auth";
 import { AuthProvider } from '../providers/auth/auth';
 import { HttpClientModule } from "@angular/common/http";
-import {MainPage} from "../pages/main/main";
+import { MainPage } from "../pages/main/main";
+import { CustomerCreatePage } from "../pages/customer-create/customer-create";
+import { ReactiveFormsModule } from "@angular/forms";
+import { CustomerHttpProvider } from '../providers/http/customer-http';
+import { ChatMessageHttpProvider } from '../providers/http/chat-message-http';
+import { SuperTabsModule } from "ionic2-super-tabs";
+import { ChatGroupListComponent } from "../components/chat-group-list/chat-group-list";
+import { ChatMessagesPageModule } from "../pages/chat-messages/chat-messages/chat-messages.module";
+import { MomentModule } from "ngx-moment";
+import { JwtModule,JWT_OPTIONS } from '@auth0/angular-jwt';
+
+function jwtFactory(authService: AuthProvider) {
+    return {
+        whitelistedDomains: [
+            new RegExp('localhost:8000/*'),
+            new RegExp('192.168.25.48:8000/*'),
+            new RegExp('192.168.25.49:8000/*'),
+        ],
+        tokenGetter: () => {
+            return authService.getToken();
+        }
+    }
+}
 
 @NgModule({
   declarations: [
@@ -24,12 +46,25 @@ import {MainPage} from "../pages/main/main";
     LoginOptionsPage,
     LoginPhoneNumberPage,
     ResetPhoneNumberPage,
-    MainPage
+    CustomerCreatePage,
+    MainPage,
+    ChatGroupListComponent
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule,
+    SuperTabsModule.forRoot(),
+    ChatMessagesPageModule,
+    MomentModule,
+    JwtModule.forRoot({
+        jwtOptionsProvider: {
+            provide: JWT_OPTIONS,
+            useFactory: jwtFactory,
+            deps: [ AuthProvider ] //Dependencias
+        }
+    })
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -39,14 +74,18 @@ import {MainPage} from "../pages/main/main";
     LoginOptionsPage,
     LoginPhoneNumberPage,
     ResetPhoneNumberPage,
-    MainPage
+    CustomerCreatePage,
+    MainPage,
+    ChatGroupListComponent
   ],
   providers: [
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     FirebaseAuthProvider,
-    AuthProvider
+    AuthProvider,
+    CustomerHttpProvider,
+    ChatMessageHttpProvider
   ]
 })
 export class AppModule {}

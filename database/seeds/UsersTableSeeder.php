@@ -28,20 +28,30 @@ class UsersTableSeeder extends Seeder
                     'photo' => $this->getAdminPhoto()
                 ]);
                 Model::unguard();
+                $user->profile->firebase_uid = 'ewriLGzZs7NuluHdO1N13Zmibc42';
+                $user->profile->save();
             });
 
         factory(User::class, 1)->create([
             'email' => 'customer@user.com',
             'role' => User::ROLE_CUSTOMER
         ])->each(function($user) {
+            Model::reguard();
             $user->updateWithProfile([
-                'phone_number' => '+16505551234'
+                'phone_number' => '+16505551235'
             ]);
+            Model::unguard();
+            $user->profile->firebase_uid = '9B1hKWp8wKduyFnFiVxEtt5kOZn2';
+            $user->profile->save();
         });
 
-        factory(User::class, 50)->create([
+        factory(User::class, 20)->create([
             'role' => User::ROLE_CUSTOMER
-        ]);
+        ])->each(function ($user,$key){
+            $user->profile->phone_number = "+165055510{$key}";
+            $user->profile->firebase_uid = "user-{$key}";
+            $user->profile->save();
+        });
     }
 
     public function getAdminPhoto(){

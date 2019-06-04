@@ -2,17 +2,19 @@
 declare(strict_types=1);
 namespace CodeShopping\Models;
 
+use CodeShopping\Firebase\FirebaseSync;
 use CodeShopping\Models\UserProfile;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\DB;
+use Mnabialek\LaravelEloquentFilter\Traits\Filterable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class User extends Authenticatable implements JWTSubject
 {
-    use Notifiable, SoftDeletes;
+    use Notifiable, SoftDeletes, FirebaseSync, Filterable;
 
     const ROLE_SELLER = 1;
     const ROLE_CUSTOMER = 2;
@@ -118,7 +120,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return [
             'email' =>  $this->email,
-            'name'  =>  $this->name
+            'name'  =>  $this->name,
+            'profile'       =>  [
+                'has_photo' => $this->profile->photo? true : false,
+                'photo_url' => $this->profile->photo_url,
+                'phone_number' => $this->profile->phone_number,
+                'firebase_uid'  => $this->profile->firebase_uid
+            ]
         ];
     }
 
@@ -126,6 +134,36 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(UserProfile::class)->withDefault();
     }
+
+    protected function syncFbCreate()
+    {
+        $this->syncFbSetCustom();
+    }
+
+    protected function syncFbUpdate()
+    {
+        $this->syncFbSetCustom();
+    }
+
+    protected function syncFbRemove()
+    {
+        $this->syncFbSetCustom();
+    }
+
+    public function syncFbSetCustom()
+    {
+        $this->profile->refresh(); //profile -> user -> profile
+        if($this->profile->firebase_uid){
+            $database = $this->getFirebaseDatabase();
+            $path = 'users/' . $this->profile->firebase_uid;
+            $reference = $database->getReference($path);
+            $reference->set([
+                'name'          => $this->name,
+                'photo_url'     => $this->profile->photo_url_base,
+                'deleted_at'    => $this->deleted_at
+            ]);
+        }
+    }
 }
 
-//Design Pattern - Nul Pattern
+//Design Pattern - Null Pattern

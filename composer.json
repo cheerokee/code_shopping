@@ -10,12 +10,13 @@
     "require": {
         "php": "^7.1.3",
         "cviebrock/eloquent-sluggable": "^4.6",
+        "fico7489/laravel-pivot": "^3.0",
         "fideloper/proxy": "^4.0",
+        "kreait/firebase-php": "^4.18",
         "laravel/framework": "5.7.*",
         "laravel/tinker": "^1.0",
         "mnabialek/laravel-eloquent-filter": "^0.1.1",
-        "tymon/jwt-auth": "dev-develop#481c67b0d95ad14c3f3690bb6ec2a285c2f1ab1b",
-        "kreait/firebase-php": "^4.18"
+        "tymon/jwt-auth": "dev-develop#481c67b0d95ad14c3f3690bb6ec2a285c2f1ab1b"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.5",

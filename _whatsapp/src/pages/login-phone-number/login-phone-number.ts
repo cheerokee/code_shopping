@@ -4,6 +4,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FirebaseAuthProvider } from "../../providers/auth/firebase-auth";
 import {AuthProvider} from "../../providers/auth/auth";
 import {MainPage} from "../main/main";
+import {CustomerCreatePage} from "../customer-create/customer-create";
 
 @IonicPage()
 @Component({
@@ -22,12 +23,7 @@ export class LoginPhoneNumberPage {
     const unsubscribed = this.firebaseAuth.firebase.auth().onAuthStateChanged((user) => {
       if(user)
       {
-        this.authService.login().subscribe((token) => {
-          this.redirectToMainPage();
-        },(responseError) => {
-          //redirecionar para a criação da conta do cliente
-          console.log('Redirecionar para a criação da conta do cliente');
-        });
+        this.handleAuthUser();
         unsubscribed();
       }
     });
@@ -35,11 +31,21 @@ export class LoginPhoneNumberPage {
     this.firebaseAuth.makePhoneNumberForm('#firebase-ui');
   }
 
+  handleAuthUser(){
+    this.authService.login().subscribe((token) => {
+      this.redirectToMainPage();
+    },(responseError) => {
+      //redirecionar para a criação da conta do cliente
+      this.firebaseAuth.makePhoneNumberForm('#firebase-ui').then(() => this.handleAuthUser());
+      this.redirectToCostumerCreatePage();
+    });
+  }
+
   redirectToMainPage() {
     this.navCtrl.setRoot(MainPage);
   }
 
   redirectToCostumerCreatePage() {
-    //this.navCtrl.setRoot(MainPage);
+    this.navCtrl.push(CustomerCreatePage);
   }
 }

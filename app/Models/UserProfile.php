@@ -2,22 +2,33 @@
 declare(strict_types=1);
 namespace CodeShopping\Models;
 
+use CodeShopping\Firebase\FirebaseSync;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class UserProfile extends Model
 {
+    use FirebaseSync;
+
     const BASE_PATH     = "app/public";
     const DIR_USERS = 'users';
     const DIR_USER_PHOTO = self::DIR_USERS . '/photos';
     const USER_PHOTO_PATH = self::BASE_PATH . '/' . self::DIR_USER_PHOTO;
 
-    protected $fillable = ['photo','phone_number'];
+    protected $fillable = ['phone_number', 'photo'];
 
-    public static function saveProfile(User $user,array $data): UserProfile
+    public static function createTokenToChangePhoneNumber(UserProfile $profile, $phoneNumber): string {
+        $token = base64_encode($phoneNumber);
+        $profile->phone_number_token_to_change = $token;
+        $profile->save();
+
+        return $token;
+    }
+
+    public static function saveProfile(User $user, array $data) : UserProfile
     {
-        if(array_key_exists('photo',$data)){
+        if(array_key_exists('photo', $data)){
             self::deletePhoto($user->profile);
             $data['photo'] = UserProfile::getPhotoHashName($data['photo']);
         }
@@ -25,6 +36,16 @@ class UserProfile extends Model
         $user->profile->fill($data)->save();
 
         return $user->profile;
+    }
+
+    public static function updatePhoneNumber($token): UserProfile
+    {
+        $profile = (new UserProfile)->where('phone_number_token_to_change', $token)->firstOrFail();
+        $phoneNumber = base64_decode($token);
+        $profile->phone_number = $phoneNumber;
+        $profile->phone_number_token_to_change = null;
+        $profile->save();
+        return $profile;
     }
 
     private static function getPhotoHashName(UploadedFile $photo = null)
@@ -77,8 +98,26 @@ class UserProfile extends Model
         return $dir;
     }
 
+    public function getPhotoUrlAttribute(){
+        return $this->photo ?
+            asset("storage/{$this->photo_url_base}") : $this->photo_url_base;//Serve para criar caminhos
+    }
+
+    public function getPhotoUrlBaseAttribute()
+    {
+        $path = self::photoDir();
+
+        return $this->photo ?
+            "{$path}/{$this->photo}" : 'https://www.gravatar.com/avatar/nouser.jpg';
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected function syncFbSet()
+    {
+        $this->user->syncFbSetCustom();
     }
 }
