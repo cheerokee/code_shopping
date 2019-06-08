@@ -1,0 +1,9 @@
+<header-top *ngIf="canShowNavBar()"></header-top>
+<main class="container-fluid px-0 height-100" [ngClass]="{'g-pt-65' : canShowNavBar()}">
+    <div class="row no-gutters g-pos-rel g-overflow-x-hidden height-100">
+        <navbar *ngIf="canShowNavBar()"></navbar>
+        <div class="col g-ml-45 g-ml-0--lg " ngClass="{'g-pb-65--md' : canShowNavBar()}">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+</main>

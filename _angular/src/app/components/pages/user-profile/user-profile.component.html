@@ -1,0 +1,102 @@
+<div class="g-hidden-sm-down g-bg-gray-light-v8 g-pa-20">
+  <ul class="u-list-inline g-color-gray-dark-v6">
+    <li class="list-inline-item g-mr-10">
+      <a class="u-link-v5 g-color-gray-dark-v6 g-color-secondary--hover g-valign-middle" href="#!">Dashboard</a>
+      <i class="hs-admin-angle-right g-font-size-12 g-color-gray-light-v6 g-valign-middle g-ml-10"></i>
+    </li>
+    <li class="list-inline-item">
+      <span class="g-valign-middle">Atualizar Perfil</span>
+    </li>
+  </ul>
+</div>
+
+<div class="g-pa-20">
+  <h1 class="g-font-weight-300 g-font-size-28 g-color-black g-mb-28">
+    <i class="hs-admin-layout-list-thumb"></i>&nbsp;Atualizar Perfil
+  </h1>
+  <div class="row">
+    <div class="col-md-12">
+      <card-error *ngIf="showErrors()">
+        <list-error [errors]="errors"></list-error>
+      </card-error>
+    </div>
+  </div>
+
+  <div class="table-responsive g-mb-40">
+    <div class="row">
+      <div class="col-md-12">
+        <form (submit)="submit()" [formGroup]="form">
+          <div class="row">
+            <div class="col-md-4 form-group">
+              <label>
+                <img class="profile-photo img-responsive img-thumbnail"
+                     [alt]="authService.me.name"
+                     [title]="authService.me.name"
+                     [src]="authService.me?.profile.photo_url" >
+              </label>
+              <button type="button" class="btn btn-danger form-control text-white" [hidden]="!has_photo" (click)="removePhoto()">
+                Remover foto do perfil
+              </button>
+              <div class="alert alert-info" [hidden]="has_photo || !authService.me.profile.has_photo">
+                Para remover a foto, salve o formulário
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group">
+                <label for="photo">Foto do perfil</label>
+                <input type="file" class="form-control" id="photo" (change)="onChoosePhoto($event.target.files)">
+              </div>
+              <div class="form-group">
+                <label [for]="fieldsOptions.name.label">Nome</label>
+                <input type="text" class="form-control" [id]="fieldsOptions.name.id" formControlName="name" isInvalid>
+                <field-error [field]="form.get('name')"
+                             [label]="fieldsOptions.name.label"
+                             [messages]="fieldsOptions.name.validationMessage"></field-error>
+              </div>
+              <div class="form-group">
+                <label [for]="fieldsOptions.email.label">E-mail</label>
+                <input type="email" class="form-control" [id]="fieldsOptions.email.id" formControlName="email" isInvalid>
+                <field-error [field]="form.get('email')"
+                             [label]="fieldsOptions.email.label"
+                             [messages]="fieldsOptions.email.validationMessage"></field-error>
+              </div>
+              <div class="form-group">
+                <label [for]="fieldsOptions.password.label">Senha</label>
+                <input type="password" class="form-control" [id]="fieldsOptions.password.id" formControlName="password" isInvalid>
+                <field-error [field]="form.get('password')"
+                             [label]="fieldsOptions.password.label"
+                             [messages]="fieldsOptions.password.validationMessage"></field-error>
+              </div>
+              <div class="form-group">
+                <label>Telefone</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" readonly formControlName="phone_number">
+                  <div class="input-group-append">
+                    <button class="btn btn-info" type="button" (click)="openPhoneNumberAuthModal()">Novo</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <hr />
+              <div class="row">
+                <div class="col-sm-3 offset-6">
+                  <button type="button" class="btn btn-danger form-control text-white" [routerLink]="['/categories/list']">
+                    <i class="fa fa-arrow-left"></i>&nbsp;Retornar
+                  </button>
+                </div>
+                <div class="col-sm-3">
+                  <button type="submit" class="btn btn-success form-control text-white" [disabled]="!form.valid" >
+                    <i class="fa fa-edit"></i>&nbsp;Salvar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<phone-number-auth-modal (onSuccess)="onPhoneNumberVerification($event)"></phone-number-auth-modal>

@@ -1,0 +1,23 @@
+<form (submit)="submit()">
+  <modal (onHide)="hideModal($event)"> <!-- onHide é um evento que é emitido pelo componente modal.component.ts executando assim a função hideModal -->
+    <h5 modal-title>
+      Editar Grupo - {{ form.get('name').value }}
+    </h5>
+    <div modal-body>
+      <card-error *ngIf="showErrors()">
+        <list-error [errors]="errors"></list-error>
+      </card-error>
+      <chat-group-form [form]="form" ></chat-group-form>
+      <div class="row">
+        <div class="col-md-12 d-flex justify-content-center">
+          <img class="img-fluid img-thumbnail" src="{{ photo_url }}">
+        </div>
+      </div>
+    </div>
+    <div modal-footer>
+      <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+      <button type="submit" class="btn btn-primary" [disabled]="!form.valid">Atualizar</button>
+    </div>
+  </modal>
+</form>
+

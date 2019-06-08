@@ -1,0 +1,54 @@
+<section class="g-bg-gray-light-v5">
+  <div class="container g-py-100">
+    <div class="row justify-content-center">
+      <div class="col-sm-8 col-lg-5">
+        <div class="u-shadow-v21 g-bg-white rounded g-py-40 g-px-30">
+          <header class="text-center mb-4">
+            <h2 class="h2 g-color-black g-font-weight-600">
+              Recuperação de Senha
+            </h2>
+            <p>
+              Não se preocupe, receba no seu e-mail o link para a troca de senha.
+            </p>
+          </header>
+          <div *ngIf="showMessageError" >
+            <alert-error [(show)]="showMessageError">E-mail não existe na base de dados</alert-error>
+          </div>
+          <form class="form-signin form-validate g-py-15" (submit)="submit()">
+            <div class="mb-4">
+              <label for="email" class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">
+                Email:
+              </label>
+              <input [(ngModel)]="credentials.email"
+                     id="email"
+                     type="email"
+                     name="email"
+                     class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15"
+                     placeholder="Digite o e-mail" required autofocus>
+              <div class="row justify-content-between">
+                <div class="col align-self-center text-right pt-2">
+                  <a [routerLink]="['/login']" class="g-font-size-12">
+                    Possuo a senha, fazer o Login!
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <button type="submit" id="login" class="btn btn-md btn-block u-btn-primary rounded g-py-13">
+                Recuperar Senha
+              </button>
+            </div>
+          </form>
+          <footer class="text-center">
+            <p class="g-color-gray-dark-v5 g-font-size-13 mb-0">
+              Ainda não está cadastrado?
+              <a [routerLink]="['/register']" class="g-font-weight-600">
+                Cadastre-se
+              </a>
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

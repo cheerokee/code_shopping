@@ -1,0 +1,18 @@
+<form (submit)="submit()">
+  <modal (onHide)="hideModal($event)"> <!-- onHide é um evento que é emitido pelo componente modal.component.ts executando assim a função hideModal -->
+      <h5 modal-title>
+        Editar Categoria - {{ form.get('name').value }}
+      </h5>
+      <div modal-body>
+        <card-error *ngIf="showErrors()">
+          <list-error [errors]="errors"></list-error>
+        </card-error>
+        <category-form [form]="form" ></category-form>
+      </div>
+      <div modal-footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!form.valid">Atualizar</button>
+      </div>
+  </modal>
+</form>
+

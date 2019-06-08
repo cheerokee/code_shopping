@@ -1,0 +1,199 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "angular-app": {
+      "root": "",
+      "sourceRoot": "src",
+      "projectType": "application",
+      "prefix": "app",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/angular-app",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.app.json",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.css",
+              "node_modules/pnotify/dist/PNotifyBrightTheme.css",
+              "node_modules/@fortawesome/fontawesome-free-webfonts/css/fa-solid.css",
+              "node_modules/@fortawesome/fontawesome-free-webfonts/css/fontawesome.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/select2/dist/css/select2.min.css",
+              "node_modules/select2-bootstrap4-theme/dist/select2-bootstrap4.min.css",
+              "node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css",
+              "node_modules/firebaseui/dist/firebaseui.css",
+
+              "src/assets/admin/assets/fonts/open_sans.css",
+              "src/assets/vendor/icon-line/css/simple-line-icons.css",
+              "src/assets/vendor/icon-etlinefont/style.css",
+              "src/assets/vendor/icon-line-pro/style.css",
+              "src/assets/vendor/icon-hs/style.css",
+              "src/assets/admin/assets/vendor/hs-admin-icons/hs-admin-icons.css",
+              "src/assets/vendor/animate.css",
+              "src/assets/vendor/malihu-scrollbar/jquery.mCustomScrollbar.min.css",
+              "src/assets/admin/assets/vendor/flatpickr/dist/css/flatpickr.min.css",
+              "src/assets/admin/assets/vendor/bootstrap-select/css/bootstrap-select.min.css",
+              "src/assets/admin/assets/vendor/chartist-js/chartist.min.css",
+              "src/assets/admin/assets/vendor/chartist-js-tooltip/chartist-plugin-tooltip.css",
+
+              "src/assets/vendor/hamburgers/hamburgers.min.css",
+              "src/assets/admin/assets/css/unify-admin.css",
+              "src/assets/css/custom.css"
+            ],
+            "scripts": [
+              "node_modules/popper.js/dist/umd/popper.min.js",
+              "node_modules/jquery/dist/jquery.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.min.js",
+              "node_modules/select2/dist/js/select2.min.js",
+              "node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js",
+
+              "src/assets/admin/assets/vendor/jquery-migrate/jquery-migrate.min.js",
+              "src/assets/vendor/cookiejs/jquery.cookie.js",
+              "src/assets/vendor/jquery-ui/ui/widget.js",
+              "src/assets/vendor/jquery-ui/ui/version.js",
+              "src/assets/vendor/jquery-ui/ui/keycode.js",
+              "src/assets/vendor/jquery-ui/ui/position.js",
+              "src/assets/vendor/jquery-ui/ui/unique-id.js",
+              "src/assets/vendor/jquery-ui/ui/safe-active-element.js",
+              "src/assets/vendor/jquery-ui/ui/widgets/menu.js",
+              "src/assets/vendor/jquery-ui/ui/widgets/mouse.js",
+              "src/assets/vendor/jquery-ui/ui/widgets/datepicker.js",
+              "src/assets/vendor/appear.js",
+              "src/assets/admin/assets/vendor/bootstrap-select/js/bootstrap-select.min.js",
+              "src/assets/admin/assets/vendor/flatpickr/dist/js/flatpickr.min.js",
+              "src/assets/vendor/malihu-scrollbar/jquery.mCustomScrollbar.concat.min.js",
+              "src/assets/admin/assets/vendor/chartist-js/chartist.min.js",
+              "src/assets/admin/assets/vendor/chartist-js-tooltip/chartist-plugin-tooltip.js",
+
+              "src/assets/js/hs.core.js",
+              "src/assets/admin/assets/js/components/hs.side-nav.js",
+              "src/assets/js/helpers/hs.hamburgers.js",
+              "src/assets/admin/assets/js/components/hs.range-datepicker.js",
+              "src/assets/js/components/hs.datepicker.js",
+              "src/assets/js/components/hs.dropdown.js",
+              "src/assets/js/components/hs.scrollbar.js",
+              "src/assets/admin/assets/js/components/hs.area-chart.js",
+              "src/assets/admin/assets/js/components/hs.donut-chart.js",
+              "src/assets/admin/assets/js/components/hs.bar-chart.js",
+              "src/assets/js/helpers/hs.focus-state.js",
+              "src/assets/admin/assets/js/components/hs.popup.js",
+              "src/assets/js/custom.js"
+            ],
+            "es5BrowserSupport": true
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "angular-app:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "angular-app:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "angular-app:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "src/test.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "src/tsconfig.spec.json",
+            "karmaConfig": "src/karma.conf.js",
+            "styles": [
+              "src/styles.css"
+            ],
+            "scripts": [],
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ]
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "src/tsconfig.app.json",
+              "src/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    },
+    "angular-app-e2e": {
+      "root": "e2e/",
+      "projectType": "application",
+      "prefix": "",
+      "architect": {
+        "e2e": {
+          "builder": "@angular-devkit/build-angular:protractor",
+          "options": {
+            "protractorConfig": "e2e/protractor.conf.js",
+            "devServerTarget": "angular-app:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "angular-app:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": "e2e/tsconfig.e2e.json",
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "defaultProject": "angular-app"
+}

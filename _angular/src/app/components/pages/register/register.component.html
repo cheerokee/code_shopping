@@ -1,0 +1,63 @@
+<section class="g-bg-gray-light-v5">
+  <div class="container g-py-100">
+    <div class="row justify-content-center">
+      <div class="col-sm-8 col-lg-5">
+        <div class="u-shadow-v21 g-bg-white rounded g-py-40 g-px-30">
+          <header class="text-center mb-4">
+            <h2 class="h2 g-color-black g-font-weight-600">
+              Faça o Cadastro
+            </h2>
+            <p>
+              Preencha o formulário abaixo e confirme seu cadastro através do e-mail que será enviado na sua caixa de entrada.
+            </p>
+          </header>
+          <div *ngIf="showMessageError" >
+            <alert-error [(show)]="showMessageError">Credenciais Inválidas</alert-error>
+          </div>
+          <form class="form-signin form-validate g-py-15" (submit)="submit()">
+            <div class="mb-4">
+              <label for="email" class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">
+                Email:
+              </label>
+              <input [(ngModel)]="credentials.email"
+                     id="email"
+                     type="email"
+                     name="email"
+                     class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15"
+                     placeholder="Digite o e-mail" required autofocus>
+            </div>
+            <div class="g-mb-35">
+              <label for="password" class="g-color-gray-dark-v2 g-font-weight-600 g-font-size-13">
+                Password:
+              </label>
+              <input [(ngModel)]="credentials.password"
+                     id="password"
+                     type="password"
+                     name="password"
+                     required
+                     data-msg="Por favor entre com a senha"
+                     class="form-control g-color-black g-bg-white g-bg-white--focus g-brd-gray-light-v4 g-brd-primary--hover rounded g-py-15 g-px-15 mb-3"
+                     placeholder="Digite sua senha">
+            </div>
+
+            <div class="mb-4">
+              <button type="submit" id="login" class="btn btn-md btn-block u-btn-primary rounded g-py-13">
+                Entrar
+              </button>
+            </div>
+          </form>
+          <footer class="text-center">
+            <p class="g-color-gray-dark-v5 g-font-size-13 mb-0">
+              Possuo uma conta,
+              <a [routerLink]="['/login']" class="g-font-weight-600">
+                efetuar o login
+              </a>
+            </p>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+

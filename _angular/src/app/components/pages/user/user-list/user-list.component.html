@@ -1,0 +1,104 @@
+<div class="g-hidden-sm-down g-bg-gray-light-v8 g-pa-20">
+  <ul class="u-list-inline g-color-gray-dark-v6">
+    <li class="list-inline-item g-mr-10">
+      <a class="u-link-v5 g-color-gray-dark-v6 g-color-secondary--hover g-valign-middle" href="#!">Dashboard</a>
+      <i class="hs-admin-angle-right g-font-size-12 g-color-gray-light-v6 g-valign-middle g-ml-10"></i>
+    </li>
+    <li class="list-inline-item">
+      <span class="g-valign-middle">Usuários</span>
+    </li>
+  </ul>
+</div>
+
+<div class="g-pa-20">
+  <h1 class="g-font-weight-300 g-font-size-28 g-color-black g-mb-28">
+    <i class="hs-admin-layout-list-thumb"></i>&nbsp;Usuários
+  </h1>
+  <div class="table-responsive g-mb-40">
+    <table class="table u-table--v3 g-color-black">
+      <thead>
+      <tr>
+        <td colspan="2">
+          <button class="btn btn-primary float-left" (click)="userInsertService.showModalInsert()">
+            <i class="hs-admin-plus"></i>&nbsp;Novo Usuário
+          </button>
+        </td>
+        <td colspan="3">
+          
+        </td>
+      </tr>
+      <tr>
+        <th style="width: 5%">ID</th>
+        <th style="width: 15%">Nome</th>
+        <th style="width: 30%">E-mail</th>
+        <th style="width: 15%">Criado Em</th>
+        <th style="width: 15%">Ações</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let user of users | paginate: {itemsPerPage: pagination.itemsPerPage, currentPage: pagination.page, totalItems: pagination.totalItems}">
+        <td>{{ user.id }}</td>
+        <td>{{ user.name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.created_at.date | date: 'dd/MM/yyyy' }}</td>
+        <td>
+          <a href="javascript:void(0)" (click)="userEditService.showModalEdit(user.id)">
+            <i class="fas fa-edit"></i>
+          </a> |
+          <a href="javascript:void(0)" (click)="userDeleteService.showModalDelete(user.id)">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="media align-items-center g-mb-45">
+    <pagination-template #p="paginationApi" (pageChange)="pageChange.emit($event)">
+      <nav id="datatablePagination1" class="d-flex ml-auto" aria-label="Page Navigation">
+        <ul class="list-inline text-right mb-0">
+          <li class="list-inline-item" [class.disabled]="p.isFirstPage()">
+            <a *ngIf="!p.isFirstPage()"
+               (click)="pageChanged(1)"
+               id="datatablePagination1Prev"
+               class="u-pagination-v1__item u-pagination-v1-2 g-brd-gray-light-v7 g-brd-secondary--hover g-rounded-4 g-py-8 g-px-12"
+               aria-label="Previous">
+                          <span class="g-line-height-1 g-valign-middle" aria-hidden="true">
+                              <i class="hs-admin-angle-left"></i>
+                          </span>
+              <span class="sr-only">Anterior</span>
+            </a>
+          </li>
+          <li *ngFor="let page of p.pages" [class.current]="p.getCurrent() === page.value" class="list-inline-item g-hidden-sm-down">
+            <a (click)="pageChanged(page.value)"
+               *ngIf="p.getCurrent() !== page.value"
+               id="datatablePaginationPage0"
+               class="u-pagination-v1__item u-pagination-v1-2 g-bg-secondary--active g-color-white--active g-brd-gray-light-v7 g-brd-secondary--hover g-brd-secondary--active g-rounded-4 g-py-8 g-px-15"
+               data-dt-page-to="0">
+              {{ page.label }}
+            </a>
+            <div *ngIf="p.getCurrent() === page.value" class="u-pagination-v1__item u-pagination-v1-2 g-bg-secondary--active g-color-white--active g-brd-gray-light-v7 g-brd-secondary--hover g-brd-secondary--active g-rounded-4 g-py-8 g-px-15 active">
+              <span>{{ page.label }}</span>
+            </div>
+          </li>
+          <li class="list-inline-item" [class.disabled]="p.isLastPage()">
+            <a *ngIf="!p.isLastPage()"
+               (click)="pageChanged(p.getCurrent())"
+               id="datatablePagination1Next"
+               class="u-pagination-v1__item u-pagination-v1-2 g-brd-gray-light-v7 g-brd-secondary--hover g-rounded-4 g-py-8 g-px-12"
+               aria-label="Next">
+                              <span class="g-line-height-1 g-valign-middle" aria-hidden="true">
+                                  <i class="hs-admin-angle-right"></i>
+                              </span>
+              <span class="sr-only">Próximo</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </pagination-template>
+  </div>
+</div>
+<user-new-modal     (onSuccess)="userInsertService.onInsertSuccess($event)" (onError)="userInsertService.onInsertError($event)" ></user-new-modal>
+<user-edit-modal    (onSuccess)="userEditService.onEditSuccess($event)"   (onError)="userEditService.onEditError($event)"   [userId]="userId" ></user-edit-modal>
+<user-delete-modal  (onSuccess)="userDeleteService.onDeleteSuccess($event)" (onError)="userDeleteService.onDeleteError($event)" [userId]="userId" ></user-delete-modal>
+
