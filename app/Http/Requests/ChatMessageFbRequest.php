@@ -40,4 +40,27 @@ class ChatMessageFbRequest extends FormRequest
             'content' => 'required'
         ];
     }
+
+    protected function getValidatorInstance()
+    {
+        $validator = parent::getValidatorInstance();
+
+        $validator->sometimes(
+            'content',//PARA ESSE CAMPO
+            'required|string',//ATIVE ESSA REGRA
+            function ($input){
+                return $input->type === 'text'; //SE ISSO FOR VERDADEIRO
+            }
+        );
+
+        $validator->sometimes(
+            'content',//PARA ESSE CAMPO
+            'required|image|max:' . (3 * 2014),//ATIVE ESSA REGRA
+            function ($input){
+                return $input->type === 'image'; //SE ISSO FOR VERDADEIRO
+            }
+        );
+
+        return $validator;
+    }
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
 import { FirebaseAuthProvider } from "../../../providers/auth/firebase-auth";
-import { ChatGroup, ChatMessage } from "../../../app/model";
+import { ChatMessage } from "../../../app/model";
 import { Observable } from "rxjs/Observable";
 
 /**
