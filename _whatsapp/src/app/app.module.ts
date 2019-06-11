@@ -24,6 +24,7 @@ import { ChatGroupListComponent } from "../components/chat-group-list/chat-group
 import { ChatMessagesPageModule } from "../pages/chat-messages/chat-messages/chat-messages.module";
 import { MomentModule } from "ngx-moment";
 import { JwtModule,JWT_OPTIONS } from '@auth0/angular-jwt';
+import { Media } from "@ionic-native/media";
 
 function jwtFactory(authService: AuthProvider) {
     return {

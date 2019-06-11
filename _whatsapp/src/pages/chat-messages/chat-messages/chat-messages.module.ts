@@ -9,6 +9,7 @@ import {ChatContentDetailComponent} from "../chat-content-detail/chat-content-de
 import {MomentModule} from "ngx-moment";
 import {PipesModule} from "../../../pipes/pipes.module";
 import {ChatMessageHttpProvider} from "../../../providers/http/chat-message-http";
+import { LongPressModule } from "ionic-long-press";
 
 @NgModule({
     declarations: [
@@ -22,7 +23,8 @@ import {ChatMessageHttpProvider} from "../../../providers/http/chat-message-http
     imports: [
         IonicPageModule.forChild(ChatMessagesPage),
         MomentModule,
-        PipesModule
+        PipesModule,
+        LongPressModule
     ],
     providers: [
         ChatMessageHttpProvider
