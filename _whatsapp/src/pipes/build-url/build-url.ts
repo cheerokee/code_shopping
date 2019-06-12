@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-
+import {environment} from '@app/env';
 /**
  * Generated class for the BuildUrlPipe pipe.
  *
@@ -10,6 +10,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class BuildUrlPipe implements PipeTransform {
   transform(value: string, ...args) {
-    return value.startsWith('http') ? value:`http://localhost:8000/storage/${value}`;
+    return value.startsWith('http') ? value:`${ environment.baseFilesUrl }/${value}`;
   }
 }
