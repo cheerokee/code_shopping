@@ -61,6 +61,14 @@ class ChatMessageFbRequest extends FormRequest
             }
         );
 
+        $validator->sometimes(
+            'content',//PARA ESSE CAMPO
+            'required|mimetypes:audio/wav,audio/x-hx-aac-adts|max:' . (3 * 2014),//ATIVE ESSA REGRA
+            function ($input){
+                return $input->type === 'audio'; //SE ISSO FOR VERDADEIRO
+            }
+        );
+
         return $validator;
     }
 }

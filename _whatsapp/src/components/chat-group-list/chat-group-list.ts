@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 import {FirebaseAuthProvider} from "../../providers/auth/firebase-auth";
-import {ChatGroup} from "../../app/model";
+import {ChatGroup, ChatMessage} from "../../app/model";
+import {ChatGroupFbProvider} from "../../providers/firebase/chat-group-fb";
+import {App} from "ionic-angular";
+import {ChatMessagesPage} from "../../pages/chat-messages/chat-messages/chat-messages";
+import {ChatGroupViewerProvider} from "../../providers/chat-group-viewer/chat-group-viewer";
 
 
 /**
@@ -16,26 +20,57 @@ import {ChatGroup} from "../../app/model";
 export class ChatGroupListComponent {
 
     groups: ChatGroup[] = [];
+    chatActive: ChatGroup;
 
-    constructor(private firebaseAuth: FirebaseAuthProvider ) {
+    constructor(private firebaseAuth: FirebaseAuthProvider,
+                private chatGroupFb: ChatGroupFbProvider,
+                private app: App,
+                private chatGroupViewer: ChatGroupViewerProvider) {
     }
 
     ngOnInit(){
-        const database = this.firebaseAuth.firebase.database();
-        // database.ref('chat_groups/1').on('value',function (data) {
-        //     console.log(data.val());
-        // });
-        database.ref('chat_groups').on('child_added',(data) => { //child_added = usado para nao ter duplicação de elementos
-            const group = data.val() as ChatGroup;
-            this.groups.push(group);//Vai adicionar para cada posição do array
-        });
+        this.chatGroupFb
+            .list()
+            .subscribe((groups) => {
+                groups.forEach((group) => {
+                    this.chatGroupViewer.loadViewed(group);
+                });
 
-        database.ref('chat_groups').on('child_changed',(data) => { //child_added = usado para nao ter duplicação de elementos
-            const group = data.val() as ChatGroup;
-            const index = this.groups.findIndex((g) => g.id == group.id);
-            if(index !== -1){
-              this.groups[index] = group;
-            }
-        });
+                this.groups = groups;
+            });
+
+        this.chatGroupFb.onAdded()
+            .subscribe((group) => {
+                this.chatGroupViewer.loadViewed(group);
+                this.groups.unshift(group)
+            });
+
+        this.chatGroupFb.onChanged()
+            .subscribe((group) => {
+                const index = this.groups.findIndex((g => g.id === group.id));
+
+                if(index === -1){
+                    return;
+                }
+
+                if(!this.chatActive || group.id !== this.chatActive.id){
+                    this.chatGroupViewer.loadViewed(group);
+                }else{
+                    this.chatGroupViewer.viewed(group);
+                }
+
+                this.groups.splice(index,1);
+                this.groups.unshift(group);
+            });
+    }
+
+    formatTextMessage(message: ChatMessage){
+        return message.content.length > 20 ? message.content.slice(0,20) + '...' : message.content;
+    }
+
+    goToMessages(group: ChatGroup){
+        this.chatGroupViewer.viewed(group);
+        this.chatActive = group;
+        this.app.getRootNav().push(ChatMessagesPage, {'chat_group' : group});
     }
 }

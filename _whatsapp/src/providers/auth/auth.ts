@@ -6,6 +6,7 @@ import { fromPromise } from 'rxjs/observable/fromPromise';
 import { flatMap } from "rxjs/operators";
 import { User } from "../../app/model";
 import { JwtHelperService } from '@auth0/angular-jwt';
+import {environment} from "@app/env";
 
 const TOKEN_KEY = 'code_shopping_token';
 
@@ -24,7 +25,7 @@ export class AuthProvider {
             .pipe(
                 flatMap( token => {
                     return this.http
-                        .post<{ token: string }>('http://localhost:8000/api/login_vendor',{ token })
+                        .post<{ token: string }>(`${environment.api.url}/login_vendor`,{ token })
                 })
             );
     }
@@ -35,13 +36,16 @@ export class AuthProvider {
     }
 
     private setUserFromToken(token: string) {
-        const decodedPayload = new JwtHelperService().decodeToken(token);
-        this.me = decodedPayload ? {
-            id: decodedPayload.sub,
-            name: decodedPayload.name,
-            email: decodedPayload.email,
-            profile: decodedPayload.profile
-        }: null;
+        const decodedPayloadToken = new JwtHelperService().decodeToken(token);
+        console.log(decodedPayloadToken);
+        this.me = decodedPayloadToken ? {
+            id: decodedPayloadToken.sub,
+            name: decodedPayloadToken.name,
+            email: decodedPayloadToken.email,
+            role: decodedPayloadToken.role,
+            profile: decodedPayloadToken.profile
+        } : null;
+        return;
     }
 
     getToken(): string | null {

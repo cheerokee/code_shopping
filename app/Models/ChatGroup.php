@@ -104,12 +104,19 @@ class ChatGroup extends Model
         $this->syncFbSet();//inserindo deleted_at no registro do banco
     }
 
-    protected function syncFbSet() {
+    public function updateInFb(){
+        $this->syncFbSet(self::$OPERATION_UPDATE);
+    }
+
+    protected function syncFbSet($operation = null) {
         $data = $this->toArray();
         $data['photo_url'] = $this->photo_url_base;
         unset($data['photo']);
+        $this->setTimestamps($data,$operation);
         $this->getModelReference()->update($data);
     }
+
+
 
     public function getPhotoUrlAttribute(){
         return asset("storage/{$this->photo_url_base}");//Serve para criar caminhos
@@ -121,22 +128,27 @@ class ChatGroup extends Model
     }
 
     protected function syncPivotAttached($model, $relationName, $pivotIds, $pivotIdsAttribute) {
-        $users = User::whereIn('id',$pivotIds)->get();
+        $users = User::whereIn('id', $pivotIds)->get();
         $data = [];
-        foreach($users as $user){
-            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = true;
+        foreach ($users as $user) {
+            $key = $this->chatGroupUsersKey($model, $user);
+            $data[$key] = true;
         }
-
         $this->getFirebaseDatabase()->getReference()->update($data);
     }
 
     protected function syncPivotDetached($model, $relationName, $pivotIds) {
-        $users = User::whereIn('id',$pivotIds)->get();
+        $users = User::whereIn('id', $pivotIds)->get();
         $data = [];
-        foreach($users as $user){
-            $data["chat_groups/{$model->id}/users/{$user->profile->firebase_uid}"] = null;
+        foreach ($users as $user) {
+            $key = $this->chatGroupUsersKey($model, $user);
+            $data[$key] = true;
         }
-
         $this->getFirebaseDatabase()->getReference()->update($data);
+    }
+
+    protected function chatGroupUsersKey($model, $user): string
+    {
+        return "chat_groups_users/{$model->id}/{$user->profile->firebase_uid}";
     }
 }

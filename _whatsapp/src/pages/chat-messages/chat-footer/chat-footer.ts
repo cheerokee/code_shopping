@@ -1,7 +1,10 @@
 import {Component, ViewChild} from '@angular/core';
 import {ChatMessageHttpProvider} from "../../../providers/http/chat-message-http";
-import {TextInput} from "ionic-angular";
 import Timer from 'easytimer.js/dist/easytimer.min';
+import {ItemSliding, TextInput} from "ionic-angular";
+import {AudioRecorderProvider} from "../../../providers/audio-recorder/audio-recorder";
+import {Subject} from "rxjs";
+import {debounceTime} from "rxjs/operators";
 
 /**
  * Generated class for the ChatFooterComponent component.
@@ -18,14 +21,66 @@ export class ChatFooterComponent {
     text: string = '';
     messageType = 'text';
     timer = new Timer();
+    recording = false;
+    sending = false;
+
     @ViewChild('inputFileImage')
     inputFileImage: TextInput;
+    @ViewChild('itemSliding')
+    itemSliding: ItemSliding;
+    subjectReleaseAudioButton = new Subject();
 
-    constructor(private chatMessageHttp: ChatMessageHttpProvider) {
+    constructor(private chatMessageHttp: ChatMessageHttpProvider,
+                private audioRecorder: AudioRecorderProvider) {
+    }
+
+    ngOnInit(){
+        this.onStopRecord();
+    }
+
+    onDrag(){
+        if(this.itemSliding.getSlidingPercent() > 0.9){
+            this.itemSliding.close();
+            this.clearRecording();
+            this.audioRecorder.stopRecord()
+                .then(
+                    (blob) => console.log('stop recording'),
+                    error => console.log(error)
+                );
+        }
+    }
+
+    onStopRecord() {
+        this.subjectReleaseAudioButton
+            .pipe(
+                debounceTime(500)
+            ).subscribe(() => {
+                if(!this.recording){
+                    return;
+                }
+
+                if(this.itemSliding.getSlidingPercent() === 0){
+                    this.clearRecording();
+                    this.audioRecorder.stopRecord()
+                        .then(
+                            (blob) => this.sendMessageAudio(blob),
+                            error => console.log(error)
+                        );
+                }
+            });
 
     }
 
+    clearRecording(){
+        this.timer.stop();
+        this.text = '';
+        this.recording = false;
+    }
+
     holdAudioButton() {
+        this.recording = true;
+        this.audioRecorder.startRecord();
+
         this.timer.start({precision: 'seconds'});
         this.timer.addEventListener('secondsUpdated', (e) => {
             const time = this.getMinuteSeconds();
@@ -39,8 +94,7 @@ export class ChatFooterComponent {
     }
 
     releaseAudioButton() {
-        this.timer.stop();
-        this.text = '';
+        this.subjectReleaseAudioButton.next();
     }
 
     sendMessageText() {
@@ -56,11 +110,21 @@ export class ChatFooterComponent {
         this.sendMessage({content: files[0], type: 'image'});
     }
 
+    sendMessageAudio(blob: Blob) {
+        this.sendMessage({content: blob, type: 'audio'});
+    }
+
     sendMessage(data: { content,type }) {
+        this.sending = true;
         this.chatMessageHttp
             .create(1,data)
             .subscribe(() => {
-                this.text = '';
+                this.sending = false;
+                if(data.type === 'text'){
+                    this.text = '';
+                }
+            }, () => {
+                this.sending = false;
             });
     }
 

@@ -1,5 +1,5 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
+import {BrowserModule} from "@angular/platform-browser";
+import {ErrorHandler,NgModule} from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
 
 import { MyApp } from './app.component';
@@ -25,13 +25,18 @@ import { ChatMessagesPageModule } from "../pages/chat-messages/chat-messages/cha
 import { MomentModule } from "ngx-moment";
 import { JwtModule,JWT_OPTIONS } from '@auth0/angular-jwt';
 import { Media } from "@ionic-native/media";
+import { File } from "@ionic-native/file";
+import { ChatGroupFbProvider } from "../providers/firebase/chat-group-fb";
+import { PipesModule } from "../pipes/pipes.module";
+import { ChatGroupViewerProvider } from '../providers/chat-group-viewer/chat-group-viewer';
+import { DirectivesModule } from "../directives/directives.module";
 
 function jwtFactory(authService: AuthProvider) {
     return {
         whitelistedDomains: [
             new RegExp('localhost:8000/*'),
-            new RegExp('192.168.25.48:8000/*'),
-            new RegExp('192.168.25.49:8000/*'),
+            new RegExp('192.168.100.20:8000/*'),
+            new RegExp('192.168.0.100:8000/*')
         ],
         tokenGetter: () => {
             return authService.getToken();
@@ -59,6 +64,8 @@ function jwtFactory(authService: AuthProvider) {
     SuperTabsModule.forRoot(),
     ChatMessagesPageModule,
     MomentModule,
+    PipesModule,
+    DirectivesModule,
     JwtModule.forRoot({
         jwtOptionsProvider: {
             provide: JWT_OPTIONS,
@@ -86,7 +93,11 @@ function jwtFactory(authService: AuthProvider) {
     FirebaseAuthProvider,
     AuthProvider,
     CustomerHttpProvider,
-    ChatMessageHttpProvider
+    ChatMessageHttpProvider,
+    ChatGroupFbProvider,
+    Media,
+    File,
+    ChatGroupViewerProvider
   ]
 })
 export class AppModule {}

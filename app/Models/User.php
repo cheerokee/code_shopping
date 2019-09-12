@@ -119,13 +119,14 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [
-            'email' =>  $this->email,
-            'name'  =>  $this->name,
-            'profile'       =>  [
-                'has_photo' => $this->profile->photo? true : false,
+            'email' => $this->email,
+            'name' => $this->name,
+            'role' => $this->role,
+            'profile' => [
+                'has_photo' => $this->profile->photo ? true : false,
                 'photo_url' => $this->profile->photo_url,
                 'phone_number' => $this->profile->phone_number,
-                'firebase_uid'  => $this->profile->firebase_uid
+                'firebase_uid' => $this->profile->firebase_uid
             ]
         ];
     }
@@ -152,15 +153,16 @@ class User extends Authenticatable implements JWTSubject
 
     public function syncFbSetCustom()
     {
-        $this->profile->refresh(); //profile -> user -> profile
-        if($this->profile->firebase_uid){
+        $this->profile->refresh();
+        if ($this->profile->firebase_uid) {
             $database = $this->getFirebaseDatabase();
             $path = 'users/' . $this->profile->firebase_uid;
             $reference = $database->getReference($path);
             $reference->set([
-                'name'          => $this->name,
-                'photo_url'     => $this->profile->photo_url_base,
-                'deleted_at'    => $this->deleted_at
+                'name' => $this->name,
+                'role' => $this->role,
+                'photo_url' => $this->profile->photo_url_base,
+                'deleted_at' => $this->deleted_at
             ]);
         }
     }

@@ -9,6 +9,12 @@ class CorsMiddleware
     private $origins = [
         'http://localhost:4200',
         'http://localhost:8100',
+        'http://192.168.100.20:8100',
+        'http://192.168.100.20:8101',
+        'http://192.168.0.100:8100',
+        'http://192.168.0.100:8101',
+        'http://192.168.0.100:4200',
+        'http://192.168.100.20:4200',
     ];
     /**
      * Handle an incoming request.

@@ -6,6 +6,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
 import { ChatMessagesPage } from "../pages/chat-messages/chat-messages/chat-messages";
+import {LoginOptionsPage} from "../pages/login-options/login-options";
+import {MainPage} from "../pages/main/main";
 
 @Component({
   templateUrl: 'app.html'
@@ -13,7 +15,7 @@ import { ChatMessagesPage } from "../pages/chat-messages/chat-messages/chat-mess
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = ChatMessagesPage;
+  rootPage: any = MainPage;
 
   pages: Array<{title: string, component: any}>;
 

@@ -1,12 +1,16 @@
 <ion-item no-lines text-wrap
-        [ngClass]="{'chat-content-left': !(message.user_id | isCurrentUser),'chat-content-right': message.user_id | isCurrentUser}">
-  <strong [style.color]="(message.user | async)?.name | colorFirstLetter">
-    {{ (message.user | async)?.name }}
-  </strong>
-  <br />
-  <span *ngIf="message.type === 'text'">{{ message.content }}</span>
+          [ngClass]="{'chat-content-left': !(message.user_id | isCurrentUser), 'chat-content-right': message.user_id | isCurrentUser}">
+  <strong [style.color]="(message.user|async)?.name | colorFirstLetter">
+    {{(message.user$|async)?.name}}
+  </strong><br>
+  <span *ngIf="message.type === 'text'">{{message.content}}</span>
   <ion-card *ngIf="message.type === 'image'">
-    <img [src]="message.content | buildUrl" alt="" />
+    <img [src]="message.content | buildUrl" alt="" (click)="showImage(message)">
   </ion-card>
-  <p class="chat-content-datetime" margin-top="4" text-right>{{ message.created_at | amDateFormat: 'DD/MM/YYYY HH:mm' }}</p>
+
+  <audio controls style="width: 100%"
+         *ngIf="message.type === 'audio'">
+    <source [src]="message.content | buildUrl">
+  </audio>
+  <p class="chat-content-datetime" text-right>{{message.created_at | amDateFormat: 'DD/MM/YYYY HH:mm'}}</p>
 </ion-item>
