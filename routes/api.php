@@ -31,13 +31,13 @@ Route::group(['namespace' => 'Api', 'as' => 'api.'], function (){
 
     //Especificando o guardião api
     Route::group(['middleware' => ['auth:api','jwt.refresh']], function (){
+        Route::name('logout')->post('logout','AuthController@logout');
 
         Route::patch('profile', 'UserProfileController@update');
 
         Route::resource('chat_groups.messages', 'ChatMessageFbController',['only' => ['store']]);
 
         Route::group(['middleware' => ['can:is_seller']], function (){
-            Route::name('logout')->post('logout','AuthController@logout');
 
             Route::name('me')->get('me', 'AuthController@me');
             Route::patch('products/{product}/restore','ProductController@restore');

@@ -13,6 +13,7 @@ import {AudioRecorderProvider} from "../../../providers/audio-recorder/audio-rec
 import {ChatMessageFb} from "../../../providers/firebase/chat-message-fb";
 import {PhotoViewer} from "@ionic-native/photo-viewer";
 import {BuildUrlPipe} from "../../../pipes/build-url/build-url";
+import {RedirectIfNotAuthProvider} from "../../../providers/redirect-if-not-auth/redirect-if-not-auth";
 
 @NgModule({
     declarations: [
@@ -30,9 +31,10 @@ import {BuildUrlPipe} from "../../../pipes/build-url/build-url";
         LongPressModule
     ],
     providers: [
-        AudioRecorderProvider,
-        ChatMessageFb,
-        PhotoViewer
+      AudioRecorderProvider,
+      ChatMessageFb,
+      PhotoViewer,
+      RedirectIfNotAuthProvider
     ]
 })
 export class ChatMessagesPageModule {}

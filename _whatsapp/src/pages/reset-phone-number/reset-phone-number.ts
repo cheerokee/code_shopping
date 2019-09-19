@@ -1,9 +1,18 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams,AlertController, ToastController} from 'ionic-angular';
+import {
+  IonicPage,
+  NavController,
+  NavParams,
+  AlertController,
+  ToastController,
+  LoadingController,
+  Loading
+} from 'ionic-angular';
 import {FormControl, Validators} from "@angular/forms";
 import {FirebaseAuthProvider} from "../../providers/auth/firebase-auth";
 import {CustomerHttpProvider} from "../../providers/http/customer-http";
 import {LoginOptionsPage} from "../login-options/login-options";
+import {environment} from "@app/env";
 
 /**
  * Generated class for the ResetPhoneNumberPage page.
@@ -20,55 +29,72 @@ import {LoginOptionsPage} from "../login-options/login-options";
 export class ResetPhoneNumberPage {
 
   email = new FormControl('',[Validators.required, Validators.email]);
-  canShowFirebaseUi = false;
+  hasBtnEmailClicked = false;
+  showFirebaseUI = environment.showFirebaseUI;
+  loader: Loading;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private firebaseAuth: FirebaseAuthProvider,
               private customerHttp: CustomerHttpProvider,
               private alertCtrl: AlertController,
-              private toastCtrl: ToastController) {
+              private toastCtrl: ToastController,
+              private loadingCtrl: LoadingController) {
   }
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad ResetPhoneNumberPage');
   }
 
-  showFirebaseUI() {
-    this.canShowFirebaseUi = true;
+  loadFirebaseUI() {
+    this.hasBtnEmailClicked = true;
     this.handleUpdate();
   }
 
   handleUpdate() {
-      this.firebaseAuth
+      if(environment.showFirebaseUI){
+        this.firebaseAuth
           .makePhoneNumberForm('#firebase-ui')
           .then(() => {
-              const email = this.email.value;
-              this.customerHttp
-                  .requestUpdatePhoneNumber(email)
-                  .subscribe(() => {
-                      const alert = this.alertCtrl.create({
-                          title: 'Alerta',
-                          subTitle: `
+            this.requestUpdatePhoneNumber();
+          });
+      }
+  }
+
+  requestUpdatePhoneNumber(){
+    const loader = this.loadingCtrl.create({
+      content: 'Carregando...'
+    });
+    loader.present();
+
+    const email = this.email.value;
+    this.customerHttp
+      .requestUpdatePhoneNumber(email)
+      .subscribe(() => {
+        loader.dismiss();
+        const alert = this.alertCtrl.create({
+          title: 'Alerta',
+          subTitle: `
                             Um e-mail com a validação da mudança foi enviado.
                             Valide-o para logar com o novo telefone
                             `,
-                          buttons: [{
-                              text: 'OK',
-                              handler: () => {
-                                  this.navCtrl.setRoot(LoginOptionsPage);
-                              }
-                          }]
-                      });
+          buttons: [{
+            text: 'OK',
+            handler: () => {
+              this.navCtrl.setRoot(LoginOptionsPage);
+            }
+          }]
+        });
 
-                      alert.present();
-                  },() => {
-                      const toast = this.toastCtrl.create({
-                          message: "Não foi possivel requisitar a alteração do telefone.",
-                          duration: 3000
-                      });
-                      toast.present();
-                      this.handleUpdate();
-                  })
-          });
+        alert.present();
+      },() => {
+        loader.dismiss();
+
+        const toast = this.toastCtrl.create({
+          message: "Não foi possivel requisitar a alteração do telefone.",
+          duration: 3000
+        });
+        toast.present();
+        this.handleUpdate();
+      })
   }
 }

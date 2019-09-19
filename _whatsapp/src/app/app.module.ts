@@ -13,7 +13,7 @@ import { LoginPhoneNumberPage } from "../pages/login-phone-number/login-phone-nu
 import { ResetPhoneNumberPage } from "../pages/reset-phone-number/reset-phone-number";
 import { FirebaseAuthProvider } from "../providers/auth/firebase-auth";
 import { AuthProvider } from '../providers/auth/auth';
-import { HttpClientModule } from "@angular/common/http";
+import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import { MainPage } from "../pages/main/main";
 import { CustomerCreatePage } from "../pages/customer-create/customer-create";
 import { ReactiveFormsModule } from "@angular/forms";
@@ -30,13 +30,20 @@ import { ChatGroupFbProvider } from "../providers/firebase/chat-group-fb";
 import { PipesModule } from "../pipes/pipes.module";
 import { ChatGroupViewerProvider } from '../providers/chat-group-viewer/chat-group-viewer';
 import { DirectivesModule } from "../directives/directives.module";
+import { StoragePermissionProvider } from '../providers/storage-permission/storage-permission';
+import { Diagnostic } from "@ionic-native/diagnostic";
+import {FirebasePhoneNumberCheckComponent} from "../components/firebase-phone-number-check/firebase-phone-number-check";
+import {SelectCountriesCodeComponent} from "../components/select-countries-code/select-countries-code";
+import {RefreshTokenInterceptor} from "../providers/auth/refresh-token-interceptor";
+import { RedirectIfNotAuthProvider } from '../providers/redirect-if-not-auth/redirect-if-not-auth';
+import {MoreOptionsComponent} from "../components/more-options/more-options";
+//import {FCM} from "@ionic-native/fcm";
 
 function jwtFactory(authService: AuthProvider) {
     return {
         whitelistedDomains: [
             new RegExp('localhost:8000/*'),
-            new RegExp('192.168.100.20:8000/*'),
-            new RegExp('192.168.0.100:8000/*')
+            new RegExp('192.168.100.54:8000/*')
         ],
         tokenGetter: () => {
             return authService.getToken();
@@ -54,7 +61,10 @@ function jwtFactory(authService: AuthProvider) {
     ResetPhoneNumberPage,
     CustomerCreatePage,
     MainPage,
-    ChatGroupListComponent
+    ChatGroupListComponent,
+    FirebasePhoneNumberCheckComponent,
+    SelectCountriesCodeComponent,
+    MoreOptionsComponent
   ],
   imports: [
     BrowserModule,
@@ -84,7 +94,10 @@ function jwtFactory(authService: AuthProvider) {
     ResetPhoneNumberPage,
     CustomerCreatePage,
     MainPage,
-    ChatGroupListComponent
+    ChatGroupListComponent,
+    FirebasePhoneNumberCheckComponent,
+    SelectCountriesCodeComponent,
+    MoreOptionsComponent
   ],
   providers: [
     StatusBar,
@@ -97,7 +110,15 @@ function jwtFactory(authService: AuthProvider) {
     ChatGroupFbProvider,
     Media,
     File,
-    ChatGroupViewerProvider
+    ChatGroupViewerProvider,
+    StoragePermissionProvider,
+    Diagnostic,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: RefreshTokenInterceptor,
+      multi: true
+    },
+    RedirectIfNotAuthProvider
   ]
 })
 export class AppModule {}

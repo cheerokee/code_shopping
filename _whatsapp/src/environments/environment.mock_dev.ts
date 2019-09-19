@@ -6,10 +6,11 @@ export const environment = {
   production: false,
   api: {
     protocolo: 'http',
-    host: '192.168.100.20:8000',
+    host: '192.168.100.54:8000',
     get url(){
       return `${this.protocolo}://${this.host}/api`
     }
   },
-  baseFilesUrl: 'http://192.168.100.20:8000/storage'
+  baseFilesUrl: 'http://192.168.100.54:8000/storage',
+  showFirebaseUI: !document.URL.startsWith('file:///')
 };

@@ -68,7 +68,8 @@ export class FirebaseAuthProvider {
     try{
       const user = await this.getUser();
       if(!user) {
-        throw new Error('User not found');
+        // throw new Error('User not found');
+        return null;
       }
 
       const token = await user.getIdTokenResult();
@@ -97,6 +98,15 @@ export class FirebaseAuthProvider {
             unsubscribed();
           });
     });
+  }
+
+  async isAuth(): Promise<boolean>{
+    try{
+      const user = await this.getUser();
+      return user !== null;
+    }catch (e) {
+      return false;
+    }
   }
 
   private getCurrentUser(): firebase.User | null {

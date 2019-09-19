@@ -8,6 +8,8 @@ import { ListPage } from '../pages/list/list';
 import { ChatMessagesPage } from "../pages/chat-messages/chat-messages/chat-messages";
 import {LoginOptionsPage} from "../pages/login-options/login-options";
 import {MainPage} from "../pages/main/main";
+import {LoginPhoneNumberPage} from "../pages/login-phone-number/login-phone-number";
+import {ResetPhoneNumberPage} from "../pages/reset-phone-number/reset-phone-number";
 
 @Component({
   templateUrl: 'app.html'
@@ -15,11 +17,13 @@ import {MainPage} from "../pages/main/main";
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = MainPage;
+  rootPage: any = LoginOptionsPage;
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform,
+              public statusBar: StatusBar,
+              public splashScreen: SplashScreen) {
     this.initializeApp();
 
     // used for an example of ngFor and navigation
@@ -32,6 +36,9 @@ export class MyApp {
 
   initializeApp() {
     this.platform.ready().then(() => {
+      // this.fcm.getToken().then((token) => {
+      //   console.log(token);
+      // });
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       this.statusBar.styleDefault();

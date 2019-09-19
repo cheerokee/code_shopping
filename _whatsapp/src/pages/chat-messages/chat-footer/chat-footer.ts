@@ -1,7 +1,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {ChatMessageHttpProvider} from "../../../providers/http/chat-message-http";
 import Timer from 'easytimer.js/dist/easytimer.min';
-import {ItemSliding, TextInput} from "ionic-angular";
+import {AlertController, ItemSliding, TextInput} from "ionic-angular";
 import {AudioRecorderProvider} from "../../../providers/audio-recorder/audio-recorder";
 import {Subject} from "rxjs";
 import {debounceTime} from "rxjs/operators";
@@ -31,7 +31,8 @@ export class ChatFooterComponent {
     subjectReleaseAudioButton = new Subject();
 
     constructor(private chatMessageHttp: ChatMessageHttpProvider,
-                private audioRecorder: AudioRecorderProvider) {
+                private audioRecorder: AudioRecorderProvider,
+                private alertCtrl: AlertController) {
     }
 
     ngOnInit(){
@@ -78,15 +79,45 @@ export class ChatFooterComponent {
     }
 
     holdAudioButton() {
-        this.recording = true;
-        this.audioRecorder.startRecord();
+      if(!this.audioRecorder.hasPermission){
+        this.showAlertPermission();
+        return;
+      }
 
-        this.timer.start({precision: 'seconds'});
-        this.timer.addEventListener('secondsUpdated', (e) => {
-            const time = this.getMinuteSeconds();
+      this.recording = true;
+      this.audioRecorder.startRecord();
 
-            this.text = `${time} Gravando...`;
-        })
+      this.timer.start({precision: 'seconds'});
+      this.timer.addEventListener('secondsUpdated', (e) => {
+          const time = this.getMinuteSeconds();
+
+          this.text = `${time} Gravando...`;
+      })
+    }
+
+    showAlertPermission() {
+      const alert = this.alertCtrl.create({
+        title: "Aviso",
+        message: "No momento você não tem permissões para gravar áudios. Deseja ativar?",
+        buttons: [
+          {
+            text: 'Ok',
+            handler: () => {
+              this.audioRecorder
+                .requestPermission().then((result) => {
+                  console.log('Permissão para gravação', result);
+                  if(result){
+                    this.audioRecorder.showAlertToCloseApp();
+                  }
+                });
+            }
+          },
+          {
+            text: 'Cancelar'
+          }
+        ]
+      });
+      alert.present();
     }
 
     private getMinuteSeconds() {

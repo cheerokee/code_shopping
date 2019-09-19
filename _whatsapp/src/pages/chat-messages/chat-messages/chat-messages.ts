@@ -3,6 +3,7 @@ import {Content, InfiniteScroll, IonicPage, NavController, NavParams} from 'ioni
 import {ChatGroup, ChatMessage} from "../../../app/model";
 import {ChatMessageFb} from "../../../providers/firebase/chat-message-fb";
 import {IsCurrentUserPipe} from "../../../pipes/is-current-user/is-current-user";
+import {RedirectIfNotAuthProvider} from "../../../providers/redirect-if-not-auth/redirect-if-not-auth";
 
 /**
  * Generated class for the ChatMessagesPage page.
@@ -30,8 +31,14 @@ export class ChatMessagesPage {
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
                 private chatMessageFb: ChatMessageFb,
-                private isCurrentUser: IsCurrentUserPipe) {
-        this.chatGroup = this.navParams.get('chat_group');
+                private isCurrentUser: IsCurrentUserPipe,
+                private redirectIfNotAuth : RedirectIfNotAuthProvider) {
+      this.chatGroup = this.navParams.get('chat_group');
+
+    }
+
+    ionViewCanEnter(){
+      return this.redirectIfNotAuth.ionViewCanEnter();
     }
 
     ionViewDidLoad() {

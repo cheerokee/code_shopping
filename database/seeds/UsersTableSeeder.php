@@ -21,6 +21,7 @@ class UsersTableSeeder extends Seeder
         factory(User::class, 1)
             ->create([
                 'email' => 'admin@user.com',
+                'role' => User::ROLE_SELLER
             ])->each(function($user){
                 Model::reguard();
                 $user->updateWithProfile([

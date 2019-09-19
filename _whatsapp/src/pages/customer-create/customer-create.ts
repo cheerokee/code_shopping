@@ -1,7 +1,16 @@
 import {Component, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, TextInput} from 'ionic-angular';
+import {
+  IonicPage,
+  Loading,
+  LoadingController,
+  NavController,
+  NavParams,
+  TextInput,
+  ToastController
+} from 'ionic-angular';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CustomerHttpProvider} from "../../providers/http/customer-http";
+import {MainPage} from "../main/main";
 
 /**
  * Generated class for the CustomerCreatePage page.
@@ -19,6 +28,7 @@ export class CustomerCreatePage {
 
   form: FormGroup;
   photoPreview;
+  loader: Loading;
 
   @ViewChild('inputFilePhoto')
   inputFilePhoto: TextInput;
@@ -26,7 +36,9 @@ export class CustomerCreatePage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               private formBuilder: FormBuilder,
-              private customerHttp: CustomerHttpProvider) {
+              private customerHttp: CustomerHttpProvider,
+              private loadingCtrl: LoadingController,
+              private toastCtrl: ToastController) {
     this.form = this.formBuilder.group({
       name: ['', [Validators.required,Validators.maxLength(255)]],
       email: ['',[Validators.required,Validators.email,Validators.maxLength(255)]],
@@ -39,9 +51,21 @@ export class CustomerCreatePage {
   }
 
   submit(){
+    const loader = this.loadingCtrl.create({
+      content: 'Carregando...'
+    });
+    loader.present();
     this.customerHttp.create(this.form.value)
         .subscribe(() => {
-           console.log("Cliente foi criado");
+          loader.dismiss();
+           this.navCtrl.setRoot(MainPage);
+        },() => {
+          loader.dismiss();
+          const toast = this.toastCtrl.create({
+            message: "Não foi possivel criar o usuário",
+            duration: 3000
+          });
+          toast.present();
         });
   }
 
